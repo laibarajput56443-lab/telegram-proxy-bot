@@ -1,6 +1,6 @@
 {
   "bot_token": "8874818641:AAEyYie9ujnnl3LnsA7T506_PkoEgueZAxc",
-  "channel_id": "@proxy_provider445",
+  "channel_id": "@ProxyMTProto44",
   "source_url": "https://raw.githubusercontent.com/SoliSpirit/mtproto/master/all_proxies.txt",
   "max_per_day": 2,
   "delete_after_days": 30
