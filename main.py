@@ -2,6 +2,7 @@ import requests
 import json
 import os
 import time
+import re
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 
 # Load config
@@ -32,18 +33,22 @@ for line in data:
     if not line:
         continue
 
-    parts = line.split()
+    # Extract MTProto proxy from tg:// or https links
+    match = re.search(r"server=([^&]+)&port=([^&]+)&secret=([^\s]+)", line)
 
-    if len(parts) != 3:
+    if not match:
         continue
 
-    server, port, secret = parts
+    server = match.group(1)
+    port = match.group(2)
+    secret = match.group(3)
+
     key = f"{server}:{port}:{secret}"
 
     if key not in posted:
         new_proxies.append((server, port, secret, key))
 
-# Limit daily posts
+# Limit per day
 new_proxies = new_proxies[:MAX_PER_DAY]
 
 count = 0
@@ -72,10 +77,10 @@ Secret: {secret}
 
     posted.add(key)
 
-    # save message id for deletion tracking (future use)
+    # Save message id + timestamp (optional tracking)
     with open("messages.txt", "a") as f:
         f.write(f"{sent.message_id}|{int(time.time())}\n")
 
-# Save updated list
+# Save updated posted list
 with open("posted.txt", "w") as f:
     f.write("\n".join(posted))
