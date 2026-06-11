@@ -56,12 +56,9 @@ count = 0
 for server, port, secret, key in new_proxies:
     count += 1
 
-    message = f"""🌐 Proxy #{count}
-
-Server: {server}
+message = f"""Server: {server}
 Port: {port}
-Secret: {secret}
-"""
+Secret: {secret}"""
 
     tg_link = f"tg://proxy?server={server}&port={port}&secret={secret}"
 
