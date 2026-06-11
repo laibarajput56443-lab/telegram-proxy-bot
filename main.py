@@ -58,8 +58,9 @@ for server, port, secret, key in new_proxies:
 
 message = f"""Server: {server}
 Port: {port}
-Secret: {secret}"""
+Secret: {secret}
 
+Provided by @ProxyMTProto44"""
     tg_link = f"tg://proxy?server={server}&port={port}&secret={secret}"
 
     keyboard = InlineKeyboardMarkup([
