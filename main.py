@@ -61,7 +61,7 @@ for server, port, secret, key in new_proxies:
 Server: {server}
 Port: {port}
 Secret: {secret}
-"""
+@ProxyMTProto44"""
 
     tg_link = f"tg://proxy?server={server}&port={port}&secret={secret}"
 
