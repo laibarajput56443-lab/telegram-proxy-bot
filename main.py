@@ -60,7 +60,6 @@ message = f"""Server: {server}
 Port: {port}
 Secret: {secret}
 
-Provided by @ProxyMTProto44"""
     tg_link = f"tg://proxy?server={server}&port={port}&secret={secret}"
 
     keyboard = InlineKeyboardMarkup([
