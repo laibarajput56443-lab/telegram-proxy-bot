@@ -24,7 +24,7 @@ else:
     posted = set()
 
 # Fetch proxy list
-data = requests.get(SOURCE_URL).text.splitlines()
+data = requests.get(SOURCE_URL, timeout=10).text.splitlines()
 
 new_proxies = []
 
@@ -33,15 +33,31 @@ for line in data:
     if not line:
         continue
 
-    # Extract MTProto proxy from tg:// or https links
+    # -------------------------------
+    # MULTI-FORMAT PROXY PARSER
+    # -------------------------------
+
+    server = port = secret = None
+
+    # Format 1: tg://proxy or server=...&port=...&secret=...
     match = re.search(r"server=([^&]+)&port=([^&]+)&secret=([^\s]+)", line)
 
-    if not match:
-        continue
+    if match:
+        server = match.group(1).strip()
+        port = match.group(2).strip()
+        secret = match.group(3).strip()
 
-    server = match.group(1)
-    port = match.group(2)
-    secret = match.group(3)
+    else:
+        # Format 2: ip:port:secret (GitHub repo format)
+        parts = line.split(":")
+        if len(parts) == 3:
+            server, port, secret = parts[0].strip(), parts[1].strip(), parts[2].strip()
+        else:
+            continue
+
+    # safety check
+    if not port.isdigit():
+        continue
 
     key = f"{server}:{port}:{secret}"
 
@@ -61,7 +77,8 @@ for server, port, secret, key in new_proxies:
 Server: {server}
 Port: {port}
 Secret: {secret}
-@ProxyMTProto44"""
+
+⚡ @ProxyMTProto44"""
 
     tg_link = f"tg://proxy?server={server}&port={port}&secret={secret}"
 
@@ -69,11 +86,15 @@ Secret: {secret}
         [InlineKeyboardButton("🔗 Connect Proxy", url=tg_link)]
     ])
 
-    sent = bot.send_message(
-        chat_id=CHANNEL_ID,
-        text=message,
-        reply_markup=keyboard
-    )
+    try:
+        sent = bot.send_message(
+            chat_id=CHANNEL_ID,
+            text=message,
+            reply_markup=keyboard
+        )
+    except Exception as e:
+        print("Failed to send message:", e)
+        continue
 
     posted.add(key)
 
@@ -84,3 +105,5 @@ Secret: {secret}
 # Save updated posted list
 with open("posted.txt", "w") as f:
     f.write("\n".join(posted))
+
+print(f"Done. Posted {count} new proxies.")
